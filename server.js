@@ -114,6 +114,16 @@ app.get("/payment-success", async (req, res) => {
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    
+    const { data: existingPayment } = await supabase
+  .from("payments")
+  .select("*")
+  .eq("stripe_payment_id", sessionId)
+  .single();
+
+if (existingPayment) {
+  return res.send("Кредиты уже были начислены");
+}
 
     const phone = session.metadata.phone;
 
