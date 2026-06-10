@@ -27,7 +27,7 @@ app.get("/users", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-  const { name, phone } = req.body;
+const { name, phone, washbox } = req.body;
 
   const { data, error } = await supabase
     .from("users")
@@ -36,7 +36,7 @@ app.post("/register", async (req, res) => {
         name,
         phone,
         credits: 0,
-        washbox: 1
+       washbox: washbox || 1
       }
     ])
     .select();
