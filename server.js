@@ -217,6 +217,36 @@ app.get("/awoara-users", async (req, res) => {
 
   }
 });
+app.get("/awoara-add-test", async (req, res) => {
+  try {
+
+    const response = await axios.post(
+      "https://en.awoara.com.cn/mer/user/change_now_money/267.html",
+      {
+        money_type: 1,
+        type: 1,
+        now_money: 1,
+        mark: "Render test"
+      },
+      {
+        headers: {
+          "x-token": process.env.AWOARA_TOKEN,
+          "Cookie": process.env.AWOARA_COOKIE
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data
+    });
+
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
