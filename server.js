@@ -108,66 +108,87 @@ error: error.message
 });
 
 app.get("/payment-success", async (req, res) => {
-try {
-const sessionId = req.query.session_id;
+  try {
 
-```
-if (!sessionId) {
-  return res.send("Нет session_id");
-}
+    const sessionId = req.query.session_id;
 
-const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-const { data: existingPayment } = await supabase
-  .from("payments")
-  .select("*")
-  .eq("stripe_payment_id", sessionId)
-  .single();
-
-if (existingPayment) {
-  return res.send("Кредиты уже были начислены");
-}
-
-const phone = session.metadata.phone;
-
-const { data: user, error: userError } = await supabase
-  .from("users")
-  .select("*")
-  .eq("phone", phone)
-  .single();
-
-if (userError || !user) {
-  return res.send("Пользователь не найден");
-}
-
-const newCredits = (user.credits || 0) + 100;
-
-const { error } = await supabase
-  .from("users")
-  .update({
-    credits: newCredits
-  })
-  .eq("phone", phone);
-
-if (error) {
-  return res.status(500).send(error.message);
-}
-
-await supabase
-  .from("payments")
-  .insert([
-    {
-      stripe_payment_id: sessionId,
-      amount: 1
+    if (!sessionId) {
+      return res.send("Нет session_id");
     }
-  ]);
 
-return res.send("Оплата успешна! Начислено 100 кредитов.");
-```
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-} catch (error) {
-return res.status(500).send(error.message);
-}
+    const { data: existingPayment } = await supabase
+      .from("payments")
+      .select("*")
+      .eq("stripe_payment_id", sessionId)
+      .single();
+
+    if (existingPayment) {
+      return res.send("Кредиты уже были начислены");
+    }
+
+    const phone = session.metadata.phone;
+
+    const userResponse = await axios.get(
+      "https://en.awoara.com.cn/mer/user/lst?page=1&limit=9999",
+      {
+        headers: {
+          "x-token": process.env.AWOARA_TOKEN,
+          "Cookie": process.env.AWOARA_COOKIE
+        }
+      }
+    );
+
+    const users = userResponse.data.data.list;
+
+    const awoaraUser = users.find(
+      u => String(u.phone) === String(phone)
+    );
+
+    if (!awoaraUser) {
+      return res.send("Пользователь AWOARA не найден");
+    }
+
+    await axios.post(
+      `https://en.awoara.com.cn/mer/user/change_now_money/${awoaraUser.uid}.html`,
+      {
+        money_type: 1,
+        type: 1,
+        now_money: 100,
+        mark: "Stripe payment"
+      },
+      {
+        headers: {
+          "x-token": process.env.AWOARA_TOKEN,
+          "Cookie": process.env.AWOARA_COOKIE
+        }
+      }
+    );
+
+    await supabase
+      .from("payments")
+      .insert([
+        {
+          stripe_payment_id: sessionId,
+          amount: 1,
+          phone: phone,
+          uid: awoaraUser.uid
+        }
+      ]);
+
+    return res.send(
+      `Оплата успешна. Пользователь ${phone} получил 100 кредитов.`
+    );
+
+  } catch (error) {
+
+    return res.status(500).send(
+      error.response?.data?.message ||
+      error.message
+    );
+
+  }
 });
 
 app.get("/payment-cancel", (req, res) => {
