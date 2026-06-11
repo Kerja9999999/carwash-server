@@ -75,9 +75,9 @@ const session = await stripe.checkout.sessions.create({
     {
       price_data: {
         currency: "eur",
-        product_data: {
-         name: `${credits} CarWash Credits`
-        },
+product_data: {
+  name: `${credits} CarWash Credits`
+},
         unit_amount: amount
       },
       quantity: 1
