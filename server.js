@@ -117,7 +117,7 @@ console.log("PAYMENT SUCCESS ROUTE HIT");
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-
+    console.log("PHONE:", session.metadata.phone);
     // ЗАЩИТА ОТ ПОВТОРНОГО НАЧИСЛЕНИЯ
 
     const { data: existingPayment } = await supabase
