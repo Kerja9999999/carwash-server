@@ -239,8 +239,6 @@ app.get("/awoara-add-test", async (req, res) => {
     });
 
   }
-});
-app.get("/awoara-users", async (req, res) => {
 
 });
 
