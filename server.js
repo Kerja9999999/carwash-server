@@ -340,9 +340,7 @@ app.get("/test-topup", async (req, res) => {
     res.status(500).json({
       error: error.message,
       details: error.response?.data || null
-    });
-
-  }
+  
 });
 
 const PORT = process.env.PORT || 3000;
