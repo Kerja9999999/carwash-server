@@ -64,7 +64,7 @@ error: error.message
 
 app.post("/create-payment", async (req, res) => {
 try {
-const { phone } = req.body;
+const { phone, credits, amount } = req.body;
 
 ```
 const session = await stripe.checkout.sessions.create({
