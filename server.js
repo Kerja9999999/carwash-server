@@ -198,40 +198,6 @@ app.get("/payment-success", async (req, res) => {
 
   }
 });
-await supabase
-  .from("payments")
-  .insert([
-    {
-      stripe_payment_id: sessionId,
-      phone: phone,
-      uid: awoaraUser.uid,
-      amount: 1
-    }
-  ]);
-    await supabase
-      .from("payments")
-      .insert([
-        {
-          stripe_payment_id: sessionId,
-          amount: 1,
-          phone: phone,
-          uid: awoaraUser.uid
-        }
-      ]);
-
-    return res.send(
-      `Оплата успешна. Пользователь ${phone} получил 100 кредитов.`
-    );
-
-  } catch (error) {
-
-    return res.status(500).send(
-      error.response?.data?.message ||
-      error.message
-    );
-
-  }
-});
 
 app.get("/payment-cancel", (req, res) => {
 res.send("Оплата отменена");
@@ -257,6 +223,7 @@ app.get("/awoara-users", async (req, res) => {
     });
   }
 });
+
 app.get("/awoara-users", async (req, res) => {
   try {
     const response = await axios.get(
