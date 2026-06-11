@@ -187,7 +187,7 @@ const { data, error } = await supabase
       stripe_payment_id: sessionId,
       phone: phone,
       uid: awoaraUser.uid,
-      amount: 1
+      amount: Number(session.amount_total) / 100
     }
   ]);
 
@@ -390,12 +390,7 @@ app.get("/test-topup", async (req, res) => {
 
   }
 });
-app.post("/create-payment")
-  });
 
-  res.redirect(session.url);
-
-});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
