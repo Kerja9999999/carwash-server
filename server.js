@@ -149,8 +149,17 @@ app.get("/payment-success", async (req, res) => {
     if (!awoaraUser) {
       return res.send("Пользователь AWOARA не найден");
     }
+const { data: existingPayment } = await supabase
+  .from("payments")
+  .select("*")
+  .eq("stripe_payment_id", sessionId)
+  .maybeSingle();
 
+if (existingPayment) {
+  return res.send("Кредиты уже начислены");
+}
     await axios.post(
+      
       `https://en.awoara.com.cn/mer/user/change_now_money/${awoaraUser.uid}.html`,
       {
         money_type: 1,
@@ -165,7 +174,16 @@ app.get("/payment-success", async (req, res) => {
         }
       }
     );
-
+await supabase
+  .from("payments")
+  .insert([
+    {
+      stripe_payment_id: sessionId,
+      phone: phone,
+      uid: awoaraUser.uid,
+      amount: 1
+    }
+  ]);
     await supabase
       .from("payments")
       .insert([
