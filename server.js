@@ -87,7 +87,7 @@ const session = await stripe.checkout.sessions.create({
 metadata: {
   phone,
   credits
-}
+},
 
   success_url:
     "https://carwash-server-x53y.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}",
@@ -412,7 +412,7 @@ app.get("/buy-test", async (req, res) => {
 metadata: {
   phone,
   credits
-}
+},
 
     success_url:
       "https://carwash-server-x53y.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}",
