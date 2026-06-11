@@ -1,7 +1,7 @@
 const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
 const Stripe = require("stripe");
-
+const axios = require("axios");
 const app = express();
 
 app.use(express.json());
@@ -192,6 +192,29 @@ app.get("/awoara-users", async (req, res) => {
       error: error.message,
       details: error.response?.data
     });
+  }
+});
+app.get("/awoara-users", async (req, res) => {
+  try {
+    const response = await axios.get(
+      "https://en.awoara.com.cn/mer/user/lst?page=1&limit=9999",
+      {
+        headers: {
+          "x-token": process.env.AWOARA_TOKEN,
+          "Cookie": process.env.AWOARA_COOKIE
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || null
+    });
+
   }
 });
 const PORT = process.env.PORT || 3000;
