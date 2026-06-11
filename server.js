@@ -76,17 +76,18 @@ const session = await stripe.checkout.sessions.create({
       price_data: {
         currency: "eur",
         product_data: {
-          name: "100 CarWash Credits"
+         name: `${credits} CarWash Credits`
         },
-        unit_amount: 100
+        unit_amount: amount
       },
       quantity: 1
     }
   ],
 
-  metadata: {
-    phone: phone
-  },
+metadata: {
+  phone,
+  credits
+}
 
   success_url:
     "https://carwash-server-x53y.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}",
@@ -408,9 +409,10 @@ app.get("/buy-test", async (req, res) => {
       }
     ],
 
-    metadata: {
-      phone: "26245562"
-    },
+metadata: {
+  phone,
+  credits
+}
 
     success_url:
       "https://carwash-server-x53y.onrender.com/payment-success?session_id={CHECKOUT_SESSION_ID}",
