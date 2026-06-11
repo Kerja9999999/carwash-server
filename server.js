@@ -174,16 +174,22 @@ console.log("PAYMENT SUCCESS ROUTE HIT");
 
     // СОХРАНЯЕМ ОПЛАТУ
 
-    await supabase
-      .from("payments")
-      .insert([
-        {
-          stripe_payment_id: sessionId,
-          phone: phone,
-          uid: awoaraUser.uid,
-          amount: 1
-        }
-      ]);
+console.log("BEFORE SAVE");
+console.log("sessionId =", sessionId);
+console.log("phone =", phone);
+console.log("uid =", awoaraUser.uid);
+
+const { data, error } = await supabase
+  .from("payments")
+  .insert([
+    {
+      stripe_payment_id: sessionId,
+      phone: phone,
+      uid: awoaraUser.uid,
+      amount: 1
+    }
+  ]);
+
 
     return res.send(
       `Оплата успешна. Пользователь ${phone} получил 100 кредитов.`
