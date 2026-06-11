@@ -323,6 +323,36 @@ app.post("/awoara-topup", async (req, res) => {
     });
   }
 });
+app.get("/test-topup", async (req, res) => {
+  try {
+
+    const response = await axios.post(
+      "https://en.awoara.com.cn/mer/user/change_now_money/267.html",
+      {
+        money_type: 1,
+        type: 1,
+        now_money: 10,
+        mark: "Stripe test"
+      },
+      {
+        headers: {
+          "x-token": process.env.AWOARA_TOKEN,
+          "Cookie": process.env.AWOARA_COOKIE
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || null
+    });
+
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
