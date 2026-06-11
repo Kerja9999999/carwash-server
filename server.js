@@ -239,6 +239,8 @@ app.get("/awoara-add-test", async (req, res) => {
     });
 
   }
+});
+app.get("/awoara-users", async (req, res) => {
 
 });
 
@@ -340,7 +342,9 @@ app.get("/test-topup", async (req, res) => {
     res.status(500).json({
       error: error.message,
       details: error.response?.data || null
-  
+    });
+
+  }
 });
 
 const PORT = process.env.PORT || 3000;
@@ -348,3 +352,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 console.log(`Server started on ${PORT}`);
 });
+pravilno??
