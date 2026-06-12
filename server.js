@@ -411,6 +411,38 @@ app.post("/login", async (req, res) => {
 
   }
 });
+app.post("/balance", async (req, res) => {
+
+  try {
+
+    const { account, password } = req.body;
+
+    const loginResponse = await axios.post(
+      "https://en.awoara.com.cn/api/auth/login",
+      {
+        account,
+        password,
+        mer_id: 120
+      }
+    );
+
+    const user = loginResponse.data.data.user;
+
+    res.json({
+      balance: user.now_money,
+      uid: user.uid,
+      phone: user.phone
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
