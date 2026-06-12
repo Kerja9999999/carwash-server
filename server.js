@@ -377,6 +377,40 @@ app.get("/test-topup", async (req, res) => {
 
   }
 });
+app.post("/login", async (req, res) => {
+  try {
+
+    const { account, password } = req.body;
+
+    const response = await axios.post(
+      "https://en.awoara.com.cn/api/auth/login",
+      {
+        account,
+        password,
+        mer_id: 120
+      }
+    );
+
+    const user = response.data.data.user;
+
+    res.json({
+      success: true,
+      token: response.data.data.token,
+      uid: user.uid,
+      phone: user.phone,
+      balance: user.now_money,
+      nickname: user.nickname
+    });
+
+  } catch (error) {
+
+    res.status(401).json({
+      success: false,
+      error: "Login failed"
+    });
+
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
